@@ -95,7 +95,13 @@ class MyAppState extends State<MyApp>{
 					),
 				),
 				// Se dibuja una página diferente en función de lo seleccionado
-				body: pages[selectedPage],
+				body: SafeArea(
+					top: false,
+					child: IndexedStack(
+						index: selectedPage,
+						children: pages,
+					),
+				),
 				bottomNavigationBar: BottomNavigationBar(
 					items: items,
 					currentIndex: selectedPage,
@@ -297,8 +303,11 @@ class ShoppingCartState extends State<ShoppingCart>{
   Widget build(BuildContext context) {
 
     return Scaffold(
+		appBar: AppBar(
+			title: Text("Carrito de Compras"),
+		),
 		body: Center(
-			child: Text("Notifications", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+			child: Text("Carrito", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
 		),
 	);
   }
