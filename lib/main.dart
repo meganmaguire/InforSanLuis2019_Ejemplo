@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 void main() => runApp(
+
+	// Esta es la aplicación principal.
 	MaterialApp(
 		title: 'Flutter Demo',
 		theme: ThemeData(
@@ -13,15 +15,23 @@ void main() => runApp(
 	)
 );
 
+// MyApp es la página principal de nuestra aplicación, donde vamos a mostrar
+// toda la información.
 class MyApp extends StatefulWidget {
 
 	@override
 	State<StatefulWidget> createState() => MyAppState();
 
 }
+
+// El estado de nuestra página principal MyApp
 class MyAppState extends State<MyApp>{
 
+	// Nos indica que página fue seleccionada de la bottomNavigationBar.
 	int selectedPage = 0;
+
+	// Esta lista contiene las diferentes pantallas que vamos a mostrar en el
+	// body del Scaffold, dependiendo de la página seleccionada.
 	final pages = [
 		FavoritePage(),
 		SearchPage(),
@@ -29,6 +39,7 @@ class MyAppState extends State<MyApp>{
 		NotificationsPage()
 	];
 
+	// Lista de items de la BottomNavigationBar.
 	var items = [
 		BottomNavigationBarItem(
 			icon: Icon(Icons.favorite, color: Color.fromRGBO(51, 51, 51, 0.5),),
@@ -57,18 +68,18 @@ class MyAppState extends State<MyApp>{
 
 	];
 
-	// This widget is the root of your application.
+	// Definición del build de nuestra página principal MyApp
 	@override
 	Widget build(BuildContext context) {
 		return  Scaffold(
 				appBar: AppBar(
-
 					title: Text("Mishka"),
 					actions: <Widget>[
 						IconButton(
 							icon: Icon(Icons.shopping_cart, color: Color.fromRGBO(51, 51, 51, 1),),
 							onPressed: (){
-								//NAVEGACION
+								// Uso del Navigator para cambiar de pantalla al
+								// carrito de compras.
 								Navigator.of(context).push(MaterialPageRoute(builder: (context){
 									return ShoppingCart();
 								}));
@@ -76,7 +87,14 @@ class MyAppState extends State<MyApp>{
 						)
 					],
 				),
-				drawer: Drawer(child: ListView(children: <Widget>[Text("Drawer")],),),
+				drawer: Drawer(
+					child: ListView(
+						children: <Widget>[
+							Text("Drawer")
+						],
+					),
+				),
+				// Se dibuja una página diferente en función de lo seleccionado
 				body: pages[selectedPage],
 				bottomNavigationBar: BottomNavigationBar(
 					items: items,
@@ -84,7 +102,10 @@ class MyAppState extends State<MyApp>{
 					iconSize: 24,
 					selectedItemColor: Color.fromRGBO(51, 51, 51, 1),
 					unselectedItemColor: Color.fromRGBO(51, 51, 51, 0.5),
-					onTap: (int index){ setState(() => selectedPage = index );},
+					onTap: (int index){
+						// Uso del setState para redibujar el Widget.
+						setState(() => selectedPage = index );
+					},
 					backgroundColor: Color.fromRGBO(244, 240, 204,1),
 					type: BottomNavigationBarType.fixed,
 
@@ -93,8 +114,10 @@ class MyAppState extends State<MyApp>{
 	}
 }
 
+// Página de búsqueda.
 class SearchPage extends StatefulWidget{
 
+	// Lista de productos ya armados para mostrar en la Página de búsqueda.
 	List<ProductCard> products = [
 		ProductCard(
 			imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS_TnFjuTfbk5VdAEVJiGzmjTSn3Khj-qoidPcdgG_pC5hnaIRv",
@@ -130,16 +153,25 @@ class SearchPage extends StatefulWidget{
   State<StatefulWidget> createState() => SearchPageState();
 
 }
-
+// State asociado a la Página de búsqueda.
 class SearchPageState extends State<SearchPage>{
 
 	@override
   Widget build(BuildContext context) {
+
     return Container(
+
+		// El GridView nos sirve para visualizar diferentes Widgets en forma de
+		// grilla. Esta es una grilla de dos columnas que se genera en función
+		// de una lista de Widgets de tipo ProductCard definida anteriormente.
 		child: GridView.builder(
 			gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: 0.72),
 			padding: EdgeInsets.all(12),
 			itemCount: widget.products.length,
+
+			// Esta propiedad recibe una función con un índice que va dibujando
+			// los distintos Widgets de la lista products, uno a uno. Como lo
+			// visto en el ejemplo de la ListView.
 			itemBuilder: (BuildContext context, int index){
 				return widget.products[index];
 			},
@@ -149,15 +181,17 @@ class SearchPageState extends State<SearchPage>{
   }
 }
 
-
+// Página de Favoritos.
 class FavoritePage extends StatefulWidget{
 
 	@override
   State<StatefulWidget> createState() => FavoritePageState();
 }
 
+// State asociado a la Página de Favoritos.
 class FavoritePageState extends State<FavoritePage>{
 
+	// TODO: Implementar esta pantalla para mostrar favoritos.
 	@override
     Widget build(BuildContext context) {
 		return Center(
@@ -166,15 +200,17 @@ class FavoritePageState extends State<FavoritePage>{
     }
 }
 
-
+// Página de Usuario.
 class MyPage extends StatefulWidget{
 
 	@override
   State<StatefulWidget> createState() => MyPageState();
 }
 
+// State asociado a la Página de Usuario.
 class MyPageState extends State<MyPage>{
 
+	// TODO: Implementar esta pantalla para mostrar información de usuario.
 	@override
   Widget build(BuildContext context) {
 
@@ -184,15 +220,17 @@ class MyPageState extends State<MyPage>{
   }
 }
 
-
+// Página de notificaciones.
 class NotificationsPage extends StatefulWidget{
 
 	@override
   State<StatefulWidget> createState() => NotificationsPageState();
 }
 
+// State asociado a la Página de notificaciones.
 class NotificationsPageState extends State<NotificationsPage>{
 
+	// TODO: Implementar esta pantalla para mostrar notificaciones.
 	@override
   Widget build(BuildContext context) {
 
@@ -202,8 +240,11 @@ class NotificationsPageState extends State<NotificationsPage>{
   }
 }
 
-
+// Widget personalizado para mostrar una imagen, nombre y marca de los diferentes
+// productos que se encuentren en la página.
 class ProductCard extends StatelessWidget{
+
+	// Atributos del Widget necesarios para dibujarlo.
 	final String imageURL;
 	final String name;
 	final String brand;
@@ -218,6 +259,7 @@ class ProductCard extends StatelessWidget{
 		child: Column(
 			crossAxisAlignment: CrossAxisAlignment.start,
 			children: <Widget>[
+				// Recorta la imagen para coincidir con los bordes del Card.
 				ClipRRect(
 					borderRadius:  BorderRadius.vertical(top: Radius.circular(5), bottom: Radius.zero),
 					child: Image(
@@ -240,14 +282,17 @@ class ProductCard extends StatelessWidget{
   }
 }
 
+// Carrito de compras
 class ShoppingCart extends StatefulWidget{
 
 	@override
   State<StatefulWidget> createState() => ShoppingCartState();
 }
 
+// State asociado al Carrito de compras
 class ShoppingCartState extends State<ShoppingCart>{
 
+	// TODO: Implementar esta pantalla para mostrar un carrito de compras.
 	@override
   Widget build(BuildContext context) {
 
