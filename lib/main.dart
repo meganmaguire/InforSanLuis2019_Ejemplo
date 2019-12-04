@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+
+int gridCount = 2;
+
 void main() => runApp(
 
 	// Esta es la aplicación principal.
@@ -27,12 +30,13 @@ class MyApp extends StatefulWidget {
 // El estado de nuestra página principal MyApp
 class MyAppState extends State<MyApp>{
 
+
 	// Nos indica que página fue seleccionada de la bottomNavigationBar.
 	int selectedPage = 0;
 
 	// Esta lista contiene las diferentes pantallas que vamos a mostrar en el
 	// body del Scaffold, dependiendo de la página seleccionada.
-	final pages = [
+	var pages = [
 		FavoritePage(),
 		SearchPage(),
 		MyPage(),
@@ -139,7 +143,7 @@ class SearchPage extends StatefulWidget{
 
 		ProductCard(
 			imageURL: "https://m.media-amazon.com/images/I/71GmFqZnVsL._SR500,500_.jpg",
-			name: "Camisa Cuadritos",
+			name: "Camisa Cuadritos Rojos",
 			brand: "Marca Z",
 		),
 
@@ -155,6 +159,7 @@ class SearchPage extends StatefulWidget{
 			brand: "Marca Y",
 		)
 	];
+
 	@override
   State<StatefulWidget> createState() => SearchPageState();
 
@@ -171,8 +176,8 @@ class SearchPageState extends State<SearchPage>{
 		// grilla. Esta es una grilla de dos columnas que se genera en función
 		// de una lista de Widgets de tipo ProductCard definida anteriormente.
 		child: GridView.builder(
-			gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: 0.72),
-			padding: EdgeInsets.all(12),
+			gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: gridCount, crossAxisSpacing: 4, mainAxisSpacing: 4, childAspectRatio: 0.7),
+			padding: EdgeInsets.all(8),
 			itemCount: widget.products.length,
 
 			// Esta propiedad recibe una función con un índice que va dibujando
@@ -200,8 +205,9 @@ class FavoritePageState extends State<FavoritePage>{
 	// TODO: Implementar esta pantalla para mostrar favoritos.
 	@override
     Widget build(BuildContext context) {
+
 		return Center(
-			child: Text("Favorites", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),)
+			child: Text("Favorites", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
 		);
     }
 }
@@ -248,14 +254,22 @@ class NotificationsPageState extends State<NotificationsPage>{
 
 // Widget personalizado para mostrar una imagen, nombre y marca de los diferentes
 // productos que se encuentren en la página.
-class ProductCard extends StatelessWidget{
+class ProductCard extends StatefulWidget {
 
 	// Atributos del Widget necesarios para dibujarlo.
 	final String imageURL;
 	final String name;
 	final String brand;
+	bool favorited;
 
-	ProductCard({@required this.imageURL, @required this.name, @required this.brand});
+	ProductCard({@required this.imageURL, @required this.name, @required this.brand, this.favorited = false});
+
+	@override
+    State<StatefulWidget> createState() => ProductCardState();
+
+}
+
+class ProductCardState extends State<ProductCard>{
 	@override
   Widget build(BuildContext context) {
 
@@ -268,24 +282,62 @@ class ProductCard extends StatelessWidget{
 				// Recorta la imagen para coincidir con los bordes del Card.
 				ClipRRect(
 					borderRadius:  BorderRadius.vertical(top: Radius.circular(5), bottom: Radius.zero),
-					child: Image(
-						image: NetworkImage(imageURL),
-						fit: BoxFit.cover,
+					child: Container(
+						height: (MediaQuery.of(context).size.width-24)/gridCount,
+						child: Image(
+							image: NetworkImage(widget.imageURL),
+							fit: BoxFit.cover,
+						),
 					),
 				),
 				Container(
 					padding: EdgeInsets.only(top: 12, right: 8, left: 8, bottom: 4),
-					child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), ),
+					child: Text(widget.name,
+						style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+						overflow: TextOverflow.ellipsis,
+					),
 				),
-				Container(
-					padding: EdgeInsets.only(top: 4, right: 8, left: 8, bottom: 12),
-					child: Text(brand, style: TextStyle(color: Color.fromRGBO(51, 51, 51, 0.7),),),
+				Row(
+					crossAxisAlignment: CrossAxisAlignment.start,
+					mainAxisAlignment: MainAxisAlignment.center,
+					children: <Widget>[
+						Expanded(
+							child: Container(
+								padding: EdgeInsets.only(top: 8, right: 8, left: 8, bottom: 12),
+								child: Text(widget.brand,
+									style: TextStyle(color: Color.fromRGBO(51, 51, 51, 0.7),),
+									overflow: TextOverflow.ellipsis,
+								),
+							),
+						),
+						Align(
+							alignment: Alignment.bottomRight,
+							child: Container(
+								height: 30,
+								child: IconButton(
+									icon: widget.favorited ? favoritedIcon() : unfavoritedIcon(),
+									onPressed:() {
+										setState(() => widget.favorited = widget.favorited ? false : true);
+									},
+								),
+							),
+						)
+					],
 				)
 
 			],
 		),
 	);
   }
+
+  favoritedIcon(){
+		return  Icon(Icons.favorite, color: Colors.pink, size: 22,);
+  }
+
+  unfavoritedIcon(){
+		return  Icon(Icons.favorite_border, color: Colors.pink, size: 22,);
+  }
+
 }
 
 // Carrito de compras
